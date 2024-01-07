@@ -1,1 +1,18 @@
 /* You can add global styles to this file, and also import other style files */
+.leaflet-no-background {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    font-weight: bold !important;
+}
+
+html,
+body,
+app-root {
+    height: 100%;
+    margin: 0;
+}
+
+.d-block {
+    display: block !important;
+}
