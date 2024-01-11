@@ -17,8 +17,8 @@
   </div>
   <div class="map-container">
     @if(showLeaflet) {
-    <div style="height: 100%" leaflet (leafletMapReady)="onMapReady($event)" [leafletOptions]="options"
-      [leafletLayers]="layers">
+    <div style="height: 100%" leaflet (leafletMapReady)="onMapReady($event)" (leafletClick)="click($event)"
+      [leafletOptions]="options" [leafletLayers]="layers">
     </div>
     }
   </div>

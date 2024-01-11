@@ -1,16 +1,22 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit, PLATFORM_ID, effect, inject, signal } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, PLATFORM_ID, effect, inject, signal } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
-import { LatLng, Map, Polygon, circle, latLng, marker, polygon, tileLayer } from 'leaflet';
-import { log } from 'console';
+import { LatLng, LatLngBounds, LayerGroup, LeafletMouseEvent, Map, Polygon, circle, latLng, marker, polygon, rectangle, tileLayer } from 'leaflet';
 import 'leaflet-arc'; // import leaflet-arc here
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
+import "./L.Maidenhead.js"
+
+
 
 
 
 declare let L: any;
+type StoredLocalization = {
+  locator: string,
+  box: Polygon
+}
 
 @Component({
   selector: 'app-root',
@@ -20,10 +26,10 @@ declare let L: any;
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit, AfterViewInit {
-
+  constructor(private cdr: ChangeDetectorRef) { }
 
   title = 'QTHMap';
-  selectedPoints: Polygon[] = [];
+  selectedPoints: StoredLocalization[] = [];
   arc: any;
   calculatedAngle: BehaviorSubject<string> = new BehaviorSubject<string>('');
   locForm: FormGroup = new FormGroup({
@@ -31,21 +37,29 @@ export class AppComponent implements OnInit, AfterViewInit {
     targetLocalization: new FormControl(''),
   });
 
+  public features: any = {};
+
   options = {
     layers: [
-      tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '...' })
+      tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '...', noWrap: true })
     ],
     zoom: 5,
-    center: latLng(46.879966, -121.726909)
+    minZoom: 1,
+    center: latLng(0, 0)
   };
 
-  layers = [
-    polygon([[46.8, -121.85], [46.8, -121.92], [46.87, -121.8]]),
-  ];
+  layers: Polygon<any>[] = [];
   map?: Map;
+  maidenhead: any;
+
   onMapReady(map: Map) {
-    // Do stuff with map
     this.map = map;
+    this.maidenhead = L.maidenhead({
+      color: 'rgba(0, 0, 0, 0.8)',
+      onClick: (e: any) => {
+      },
+    });
+    this.layers.push(this.maidenhead);
   }
 
   platformId = inject(PLATFORM_ID);
@@ -57,7 +71,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     //1: wysokość^
     //2: szerokość<>
-    this.renderGrid();
+    // this.renderGrid();
     if (localStorage.getItem('sourceLocalization')) {
       this.locForm.patchValue({ sourceLocalization: localStorage.getItem('sourceLocalization') });
 
@@ -65,77 +79,75 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.layers.filter(x => x.getTooltip()?.getContent() == this.locForm.value.sourceLocalization).forEach(x => {
-      this.storeLocator(this.locForm.value.sourceLocalization, x);
-      console.log(this.map);
-      this.map?.setView(x.getCenter(), 5);
-    });
+    this.createBox(this.locForm.value.sourceLocalization);
+    this.map?.fitBounds(this.selectedPoints.map(x => x.box.getBounds()).reduce((acc, val) => acc.extend(val)));
   }
-  private renderGrid() {
-    this.layers.length = 0;
-    let iPases = 0;
-    let jPases = 0;
-    for (let j = -180; j < 180; j += 20) {
-      iPases++;
-      for (let i = -90; i < 90; i += 10) {
-        jPases++;
-        let locator = `${(iPases + 9).toString(36).toUpperCase()}${(jPases + 9).toString(36).toUpperCase()}`;
 
-        let poly = polygon([[i, j], [i, j + 20], [i + 10, j + 20], [i + 10, j]], { fillColor: 'transparent', fill: true });
-        poly.on('click', (e) => { this.storeLocator(locator, poly); });
-        poly.bindTooltip(locator, { permanent: true, direction: "center", className: "leaflet-no-background" });
-        poly.closePopup();
-        this.layers.push(poly);
-      }
-      jPases = 0;
-    }
-  }
 
   storeLocator(locator: string, poly: Polygon) {
+
     poly.setStyle({ fillColor: '#6aa76b', fill: true });
 
-    if (this.selectedPoints.length == 2) {
-      this.selectedPoints.filter(x => x != poly).forEach(x => {
-        x.setStyle({ fillColor: 'transparent', fill: true });
-      });
-      this.selectedPoints.length = 0;
-    }
+    this.clearSelection(locator);
+    this.selectedPoints.push({ locator, box: poly });
 
-    this.selectedPoints.push(poly);
-    this.layers.forEach(x => {
-      x.closePopup();
-      x.unbindPopup();
-    });
     if (this.arc) {
       this.map?.removeLayer(this.arc);
     }
     if (this.selectedPoints.length > 1) {
-      console.log(this.selectedPoints);
-      this.arc = L.Polyline.Arc(this.selectedPoints[0].getCenter(), this.selectedPoints[1].getCenter(), { color: 'red', vertices: 200 });
+      const center1 = this.selectedPoints[0].box.getCenter();
+      const center2 = this.selectedPoints[1].box.getCenter();
+      this.arc = L.Polyline.Arc(center1, center2, { color: 'red', vertices: 200 });
       this.arc.addTo(this.map);
-      let angle2 = getAngle(this.selectedPoints[0].getCenter().lat, this.selectedPoints[0].getCenter().lng, this.selectedPoints[1].getCenter().lat, this.selectedPoints[1].getCenter().lng);
-      this.selectedPoints[0].bindPopup(`Kąt pomiędzy ${this.selectedPoints[0].getTooltip()?.getContent()?.toString()} a  ${this.selectedPoints[1].getTooltip()?.getContent()?.toString()} wynosi: ${Math.round(angle2).toString()}`, { closeOnClick: false, autoClose: false }).openPopup();
-      // this.angle.set(Math.round(angle2).toString());
-      console.log(this.calculatedAngle.value);
-      this.calculatedAngle.next(Math.round(angle2).toString());
-      console.log(this.calculatedAngle);
+      const angle = getAngle(center1.lat, center1.lng, center2.lat, center2.lng);
+      this.selectedPoints[0].box.bindPopup(`Kąt pomiędzy ${this.selectedPoints[0].locator} a ${this.selectedPoints[1].locator} wynosi: ${Math.round(angle).toString()}°`, { closeOnClick: false, autoClose: false }).openPopup();
+      this.calculatedAngle.next(Math.round(angle).toString());
     }
   }
+
+  /**
+   * Clears the selection of points.
+   * 
+   * @param locator - Optional locator string that will not be removed from selection.
+   */
+  private clearSelection(locator?: string) {
+    if (this.selectedPoints.length === 2) {
+      this.layers = this.layers.filter(x => !this.selectedPoints.map(x => x.box).includes(x) && (!locator || !this.selectedPoints.map(z => z.locator !== locator)));
+      this.selectedPoints.length = 0;
+    }
+  }
+
+  click(event: LeafletMouseEvent) {
+    let res = this.maidenhead.latLngToMaidenheadIndex(event.latlng.lng, event.latlng.lat);
+    this.createBox(res);
+  }
+
+  /**
+   * Creates a box on the map based on the given locator.
+   * @param locator The locator string.
+   */
+  private createBox(locator: string) {
+    let box = this.maidenhead.maidehneadIndexToBBox(locator);
+    let poly = rectangle(new LatLngBounds([box[0], box[1]], [box[2], box[3]]));
+    if (this.map) {
+      poly.addTo(this.map);
+    }
+    this.layers.push(poly);
+    this.storeLocator(locator, poly);
+  }
+
   saveSourceLocalization() {
     const sourceLocalization = this.locForm.value.sourceLocalization;
     localStorage.setItem('sourceLocalization', sourceLocalization);
   }
   onSubmitSearch(event: SubmitEvent) {
-
-    console.log(this.locForm.value)
-    this.layers.filter(x => x.getTooltip()?.getContent() == this.locForm.value.sourceLocalization).forEach(x => {
-      this.storeLocator(this.locForm.value.sourceLocalization, x);
-    });
-    this.layers.filter(x => x.getTooltip()?.getContent() == this.locForm.value.targetLocalization).forEach(x => {
-      this.storeLocator(this.locForm.value.targetLocalization, x);
-    });
+    this.clearSelection();
+    this.createBox(this.locForm.value.sourceLocalization);
+    this.createBox(this.locForm.value.targetLocalization);
+    this.map?.fitBounds(this.selectedPoints.map(x => x.box.getBounds()).reduce((acc, val) => acc.extend(val)));
   }
 }
+
 function getAngle(x1: any, y1: any, x2: any, y2: any) {
   var a = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
   a = (a < 0) ? map(a, -90, 0, 270, 360) : a;
