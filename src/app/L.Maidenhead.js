@@ -42,10 +42,10 @@ L.Maidenhead = L.LayerGroup.extend({
 		var zoom = this._map.getZoom();
 		var unit = d3[zoom];
 		var lcor = lat_cor[zoom];
-		var w = bounds.getWest();
-		var e = bounds.getEast();
-		var n = bounds.getNorth();
-		var s = bounds.getSouth();
+		var w = Math.max(bounds.getWest(), -180);
+		var e = Math.min(bounds.getEast(), 180);
+		var n = Math.min(bounds.getNorth(), 90);
+		var s = Math.max(bounds.getSouth(), -90);
 		if (zoom == 1) { var c = 2; } else { var c = 0.1; }
 		if (n > 85) n = 85;
 		if (s < -85) s = -85;

@@ -1,12 +1,15 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, PLATFORM_ID, effect, inject, signal } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, PLATFORM_ID, ViewChild, effect, inject, signal } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
-import { LatLng, LatLngBounds, LayerGroup, LeafletMouseEvent, Map, Polygon, circle, latLng, marker, polygon, rectangle, tileLayer } from 'leaflet';
+import { LatLng, LatLngBounds, LayerGroup, LeafletMouseEvent, Map, MapOptions, Polygon, circle, latLng, marker, polygon, rectangle, tileLayer } from 'leaflet';
 import 'leaflet-arc'; // import leaflet-arc here
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
+import { featherSave, featherSearch, featherArrowLeftCircle } from '@ng-icons/feather-icons';
 import "./L.Maidenhead.js"
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import terminator from '@joergdietrich/leaflet.terminator';
 
 
 
@@ -21,13 +24,15 @@ type StoredLocalization = {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, LeafletModule, ReactiveFormsModule],
+  imports: [CommonModule, RouterOutlet, LeafletModule, ReactiveFormsModule, NgIconComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
+  viewProviders: [provideIcons({ featherSave, featherSearch, featherArrowLeftCircle })]
 })
 export class AppComponent implements OnInit, AfterViewInit {
   constructor(private cdr: ChangeDetectorRef) { }
 
+  @ViewChild('searchDrawer') drawer!: ElementRef<HTMLInputElement>;
   title = 'QTHMap';
   selectedPoints: StoredLocalization[] = [];
   arc: any;
@@ -39,25 +44,37 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public features: any = {};
 
-  options = {
+  options: MapOptions = {
     layers: [
-      tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '...', noWrap: true })
+      tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18, attribution: '...', noWrap: true, bounds: [
+          [-90, -180],
+          [90, 180]
+        ]
+      })
     ],
     zoom: 5,
     minZoom: 1,
-    center: latLng(0, 0)
+    center: latLng(0, 0),
+    worldCopyJump: true,
+
   };
 
   layers: Polygon<any>[] = [];
   map?: Map;
   maidenhead: any;
+  isDrawerOpen: boolean = false;
 
   onMapReady(map: Map) {
     this.map = map;
     this.maidenhead = L.maidenhead({
-      color: 'rgba(0, 0, 0, 0.8)'
+      color: 'rgba(0, 0, 0, 0.4)'
     });
     this.layers.push(this.maidenhead);
+    terminator().addTo(map);
+    setInterval(function () {
+      terminator.setTime();
+    }, 60000); // Every minute
   }
 
   platformId = inject(PLATFORM_ID);
@@ -84,6 +101,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   storeLocator(locator: string, poly: Polygon) {
 
+    if (this.selectedPoints.length == 1 && this.selectedPoints[0].locator == locator) {
+      return;
+    }
     poly.setStyle({ fillColor: '#6aa76b', fill: true });
 
     this.clearSelection(locator);
@@ -143,6 +163,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.createBox(this.locForm.value.sourceLocalization);
     this.createBox(this.locForm.value.targetLocalization);
     this.map?.fitBounds(this.selectedPoints.map(x => x.box.getBounds()).reduce((acc, val) => acc.extend(val)));
+    this.drawer.nativeElement.click();
   }
 }
 

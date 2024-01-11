@@ -1,27 +1,33 @@
-<div class="flex-container">
-  <div class="input-border">
-    <h1 style="font-size: large;">Aplikacja ustalający kąt pomiędzy dwoma lokalizatorami</h1>
-    <form [formGroup]="locForm" (submit)="onSubmitSearch($event)">
-      <div class="form-group">
-        <input type="text" placeholder="Lokalizator źródłowy:" class="input input-bordered w-full max-w-xs"
-          id="sourceLocalization" formControlName="sourceLocalization">
-        <button type="button" class="btn" (click)="saveSourceLocalization()">save</button>
-      </div>
-      <div class="form-group">
-        <input type="text" placeholder="Lokalizator docelowy:" class="input input-bordered w-full max-w-xs"
-          id="targetLocalization" formControlName="targetLocalization">
-      </div>
-      <button type="submit" class="btn btn-primary">Sprawdź</button>
-    </form>
-    <div>{{calculatedAngle| async}}</div>
-  </div>
-  <div class="map-container">
+<div class="drawer h-full">
+  <input #searchDrawer id="my-drawer" type="checkbox" class="drawer-toggle" />
+  <div class="drawer-content">
     @if(showLeaflet) {
     <div style="height: 100%" leaflet (leafletMapReady)="onMapReady($event)" (leafletClick)="click($event)"
       [leafletOptions]="options" [leafletLayers]="layers">
     </div>
     }
+    <label for="my-drawer" class="btn btn-primary drawer-button  absolute bottom-4 left-2 z-[10000]"><ng-icon
+        name="featherSearch"></ng-icon></label>
   </div>
+  <div class="drawer-side z-[10000]">
+    <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+    <ul class="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
+      <label for="my-drawer" class="btn btn-primary drawer-button  absolute bottom-4 left-2 z-[10000]"><ng-icon
+          name="featherArrowLeftCircle"></ng-icon></label>
 
-
+      <form [formGroup]="locForm" (submit)="onSubmitSearch($event)">
+        <div class="form-group flex mb-4">
+          <input type="text" placeholder="Lokalizator źródłowy:" class="input input-bordered w-full max-w-xs"
+            id="sourceLocalization" formControlName="sourceLocalization">
+          <button type="button" class="btn btn-outline ml-1" (click)="saveSourceLocalization()"><ng-icon
+              name="featherSave"></ng-icon></button>
+        </div>
+        <div class="form-group mb-4">
+          <input type="text" placeholder="Lokalizator docelowy:" class="input input-bordered w-full max-w-xs"
+            id="targetLocalization" formControlName="targetLocalization">
+        </div>
+        <button type="submit" class="btn btn-primary w-full">Szukaj</button>
+      </form>
+    </ul>
+  </div>
 </div>
