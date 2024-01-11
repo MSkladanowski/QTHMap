@@ -109,8 +109,8 @@ export class AppComponent implements OnInit, AfterViewInit {
    * @param locator - Optional locator string that will not be removed from selection.
    */
   private clearSelection(locator?: string) {
-    if (this.selectedPoints.length === 2) {
-      this.layers = this.layers.filter(x => !this.selectedPoints.map(x => x.box).includes(x) && (!locator || !this.selectedPoints.map(z => z.locator !== locator)));
+    if (this.selectedPoints.length == 2) {
+      this.layers = this.layers.filter(x => !this.selectedPoints.map(x => x.box).includes(x));
       this.selectedPoints.length = 0;
     }
   }
