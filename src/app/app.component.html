@@ -3,13 +3,13 @@
     <h1 style="font-size: large;">Aplikacja ustalający kąt pomiędzy dwoma lokalizatorami</h1>
     <form [formGroup]="locForm" (submit)="onSubmitSearch($event)">
       <div class="form-group">
-        <label for="sourceLocalization">Lokalizator źródłowy:</label>
-        <input type="text" id="sourceLocalization" formControlName="sourceLocalization">
-        <button type="button" class="btn btn-primary" (click)="saveSourceLocalization()">Zapisz</button>
+        <input type="text" placeholder="Lokalizator źródłowy:" class="input input-bordered w-full max-w-xs"
+          id="sourceLocalization" formControlName="sourceLocalization">
+        <button type="button" class="btn" (click)="saveSourceLocalization()">save</button>
       </div>
       <div class="form-group">
-        <label for="targetLocalization">Lokalizator docelowy:</label>
-        <input type="text" id="targetLocalization" formControlName="targetLocalization" class="form-control">
+        <input type="text" placeholder="Lokalizator docelowy:" class="input input-bordered w-full max-w-xs"
+          id="targetLocalization" formControlName="targetLocalization">
       </div>
       <button type="submit" class="btn btn-primary">Sprawdź</button>
     </form>
@@ -22,4 +22,6 @@
     </div>
     }
   </div>
+
+
 </div>
