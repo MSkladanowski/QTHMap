@@ -1,0 +1,87 @@
+{
+  "configVersion": 1,
+  "timestamp": 1704981801531,
+  "index": "https://mskladanowski.github.io/QTHMap/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "https://mskladanowski.github.io/QTHMap/favicon.ico",
+        "https://mskladanowski.github.io/QTHMap/index.html",
+        "https://mskladanowski.github.io/QTHMap/main-KHLU4N3N.js",
+        "https://mskladanowski.github.io/QTHMap/manifest.webmanifest",
+        "https://mskladanowski.github.io/QTHMap/polyfills-LZBJRJJE.js",
+        "https://mskladanowski.github.io/QTHMap/scripts-MRVYNVOT.js",
+        "https://mskladanowski.github.io/QTHMap/styles-62JPCNZ3.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "https://mskladanowski.github.io/QTHMap/assets/icons/icon-128x128.png",
+        "https://mskladanowski.github.io/QTHMap/assets/icons/icon-144x144.png",
+        "https://mskladanowski.github.io/QTHMap/assets/icons/icon-152x152.png",
+        "https://mskladanowski.github.io/QTHMap/assets/icons/icon-192x192.png",
+        "https://mskladanowski.github.io/QTHMap/assets/icons/icon-384x384.png",
+        "https://mskladanowski.github.io/QTHMap/assets/icons/icon-512x512.png",
+        "https://mskladanowski.github.io/QTHMap/assets/icons/icon-72x72.png",
+        "https://mskladanowski.github.io/QTHMap/assets/icons/icon-96x96.png",
+        "https://mskladanowski.github.io/QTHMap/media/layers-2x-TBM42ERR.png",
+        "https://mskladanowski.github.io/QTHMap/media/layers-55W3Q4RM.png",
+        "https://mskladanowski.github.io/QTHMap/media/marker-icon-2V3QKKVC.png"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [],
+  "hashTable": {
+    "https://mskladanowski.github.io/QTHMap/assets/icons/icon-128x128.png": "f912963bdc6d5a38d8f1dd0afbaab2ce8d657acb",
+    "https://mskladanowski.github.io/QTHMap/assets/icons/icon-144x144.png": "b155fd5f2fd5d2ea7760721063003c4cd95fd783",
+    "https://mskladanowski.github.io/QTHMap/assets/icons/icon-152x152.png": "eae6e0f0c8afb8aaae339e2a569b43e9238e5e6c",
+    "https://mskladanowski.github.io/QTHMap/assets/icons/icon-192x192.png": "15c4180454633880d98674aa7394656196c91584",
+    "https://mskladanowski.github.io/QTHMap/assets/icons/icon-384x384.png": "94a915751ef6c9282df9aea405ad679230631814",
+    "https://mskladanowski.github.io/QTHMap/assets/icons/icon-512x512.png": "1de182f76f7329dfa8f9fcdd1fdcdd695bea6a99",
+    "https://mskladanowski.github.io/QTHMap/assets/icons/icon-72x72.png": "aa88a6096bd973be7f6d7a5489bfa6bc2463f8c4",
+    "https://mskladanowski.github.io/QTHMap/assets/icons/icon-96x96.png": "7fb8f59c30ce2ff12c700321a0b39e14b3dc8f95",
+    "https://mskladanowski.github.io/QTHMap/favicon.ico": "9c39f434fe1261f68c5e3eefdf734630d99c5670",
+    "https://mskladanowski.github.io/QTHMap/index.html": "5fe7f0a89656eefcd143a539d051e73671e2a05b",
+    "https://mskladanowski.github.io/QTHMap/main-KHLU4N3N.js": "5f72d6e74ccdd92ef23f86424b28d1b0ea3152aa",
+    "https://mskladanowski.github.io/QTHMap/manifest.webmanifest": "d9bf8fd463576fc1372b6c3dcddca7ab0f13080e",
+    "https://mskladanowski.github.io/QTHMap/media/layers-2x-TBM42ERR.png": "152a162333e46d24f9d89f566312fc0c64011dee",
+    "https://mskladanowski.github.io/QTHMap/media/layers-55W3Q4RM.png": "c9e7528e491a39232ba24a2706c6c739d6fb0f06",
+    "https://mskladanowski.github.io/QTHMap/media/marker-icon-2V3QKKVC.png": "60a90bcbb2b42b7ddb4556db94eb7c1084b0e5da",
+    "https://mskladanowski.github.io/QTHMap/polyfills-LZBJRJJE.js": "fda1c82c5c620f1fa442f687b3df45a037f6fcc9",
+    "https://mskladanowski.github.io/QTHMap/scripts-MRVYNVOT.js": "cd2fb1d0897d58d7fc796d59777d522b21ef0e66",
+    "https://mskladanowski.github.io/QTHMap/styles-62JPCNZ3.css": "14718d662b59ec9fea0bb3e1811ae554ec9aab0f"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}
