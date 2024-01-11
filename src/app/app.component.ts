@@ -11,6 +11,7 @@ import "./L.Maidenhead.js"
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import terminator from '@joergdietrich/leaflet.terminator';
 import { CdkDrag } from '@angular/cdk/drag-drop';
+import { ResizeDirective } from './directive/resize.directive.js';
 
 
 
@@ -25,14 +26,17 @@ type StoredLocalization = {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, LeafletModule, ReactiveFormsModule, NgIconComponent, CdkDrag],
+  imports: [CommonModule, RouterOutlet, LeafletModule, ReactiveFormsModule, NgIconComponent, CdkDrag, ResizeDirective],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   viewProviders: [provideIcons({ featherSave, featherSearch, featherArrowLeftCircle, featherSun })]
 })
 export class AppComponent implements OnInit, AfterViewInit {
   constructor(private cdr: ChangeDetectorRef) { }
-
+  itemSize!: DOMRect;
+  updateSize(ev: DOMRect) {
+    this.itemSize = { ...ev };
+  }
   @ViewChild('searchDrawer') drawer!: ElementRef<HTMLInputElement>;
   title = 'QTHMap';
   selectedPoints: StoredLocalization[] = [];
