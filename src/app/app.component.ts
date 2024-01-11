@@ -10,6 +10,7 @@ import { featherSave, featherSearch, featherArrowLeftCircle, featherSun } from '
 import "./L.Maidenhead.js"
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import terminator from '@joergdietrich/leaflet.terminator';
+import { CdkDrag } from '@angular/cdk/drag-drop';
 
 
 
@@ -24,7 +25,7 @@ type StoredLocalization = {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, LeafletModule, ReactiveFormsModule, NgIconComponent],
+  imports: [CommonModule, RouterOutlet, LeafletModule, ReactiveFormsModule, NgIconComponent, CdkDrag],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   viewProviders: [provideIcons({ featherSave, featherSearch, featherArrowLeftCircle, featherSun })]

@@ -7,7 +7,8 @@
     </div>
     }
     <div class="  absolute bottom-4 left-2 z-[10000] flex flex-col gap-4">
-      <button class="btn" onclick="my_modal_5.showModal()"><ng-icon name="featherSun"></ng-icon></button>
+      <button class="btn" onclick="my_modal_5.open? my_modal_5.close():  my_modal_5.show()"><ng-icon
+          name="featherSun"></ng-icon></button>
       <label for="my-drawer" class="btn btn-primary drawer-button"><ng-icon name="featherSearch"></ng-icon></label>
     </div>
 
@@ -35,13 +36,6 @@
   </div>
 </div>
 
-<dialog id="my_modal_5" class="modal modal-bottom sm:modal-middle">
-  <div class="modal-box w-full">
-    <div class="modal-action justify-center">
-      <form method="dialog">
-        <img src="https://www.hamqsl.com/solarn0nbh.php" width="100%">
-        <button class="btn btn-warning">Close</button>
-      </form>
-    </div>
-  </div>
+<dialog id="my_modal_5" class="absolute top-0 right-0 z-[10000]" cdkDrag>
+  <img src="https://www.hamqsl.com/solarn0nbh.php" width="300px">
 </dialog>
