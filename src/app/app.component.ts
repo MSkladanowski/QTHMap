@@ -55,9 +55,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   onMapReady(map: Map) {
     this.map = map;
     this.maidenhead = L.maidenhead({
-      color: 'rgba(0, 0, 0, 0.8)',
-      onClick: (e: any) => {
-      },
+      color: 'rgba(0, 0, 0, 0.8)'
     });
     this.layers.push(this.maidenhead);
   }
