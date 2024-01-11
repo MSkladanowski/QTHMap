@@ -6,7 +6,7 @@ import { LatLng, LatLngBounds, LayerGroup, LeafletMouseEvent, Map, MapOptions, P
 import 'leaflet-arc'; // import leaflet-arc here
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
-import { featherSave, featherSearch, featherArrowLeftCircle } from '@ng-icons/feather-icons';
+import { featherSave, featherSearch, featherArrowLeftCircle, featherSun } from '@ng-icons/feather-icons';
 import "./L.Maidenhead.js"
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import terminator from '@joergdietrich/leaflet.terminator';
@@ -27,7 +27,7 @@ type StoredLocalization = {
   imports: [CommonModule, RouterOutlet, LeafletModule, ReactiveFormsModule, NgIconComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
-  viewProviders: [provideIcons({ featherSave, featherSearch, featherArrowLeftCircle })]
+  viewProviders: [provideIcons({ featherSave, featherSearch, featherArrowLeftCircle, featherSun })]
 })
 export class AppComponent implements OnInit, AfterViewInit {
   constructor(private cdr: ChangeDetectorRef) { }
@@ -120,6 +120,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       const angle = getAngle(center1.lat, center1.lng, center2.lat, center2.lng);
       this.selectedPoints[0].box.bindPopup(`Kąt pomiędzy ${this.selectedPoints[0].locator} a ${this.selectedPoints[1].locator} wynosi: ${Math.round(angle).toString()}°`, { closeOnClick: false, autoClose: false }).openPopup();
       this.calculatedAngle.next(Math.round(angle).toString());
+      this.map?.fitBounds(this.selectedPoints.map(x => x.box.getBounds()).reduce((acc, val) => acc.extend(val)));
     }
   }
 
@@ -162,7 +163,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.clearSelection();
     this.createBox(this.locForm.value.sourceLocalization);
     this.createBox(this.locForm.value.targetLocalization);
-    this.map?.fitBounds(this.selectedPoints.map(x => x.box.getBounds()).reduce((acc, val) => acc.extend(val)));
     this.drawer.nativeElement.click();
   }
 }
