@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1705094720384,
+  "timestamp": 1705095237557,
   "index": "https://mskladanowski.github.io/QTHMap/index.html",
   "assetGroups": [
     {
@@ -15,7 +15,7 @@
         "https://mskladanowski.github.io/QTHMap/index.html",
         "https://mskladanowski.github.io/QTHMap/main-QGSMALTS.js",
         "https://mskladanowski.github.io/QTHMap/manifest.webmanifest",
-        "https://mskladanowski.github.io/QTHMap/polyfills-LZBJRJJE.js",
+        "https://mskladanowski.github.io/QTHMap/polyfills-2Z7E34QL.js",
         "https://mskladanowski.github.io/QTHMap/scripts-CJ7U2I2N.js",
         "https://mskladanowski.github.io/QTHMap/styles-YCTE6KIV.css"
       ],
@@ -55,13 +55,13 @@
     "https://mskladanowski.github.io/QTHMap/assets/icons/icon-72x72.png": "aa88a6096bd973be7f6d7a5489bfa6bc2463f8c4",
     "https://mskladanowski.github.io/QTHMap/assets/icons/icon-96x96.png": "7fb8f59c30ce2ff12c700321a0b39e14b3dc8f95",
     "https://mskladanowski.github.io/QTHMap/favicon.ico": "9c39f434fe1261f68c5e3eefdf734630d99c5670",
-    "https://mskladanowski.github.io/QTHMap/index.html": "876b03a3a311f0e55e8cb0dad93d0c14f3547990",
+    "https://mskladanowski.github.io/QTHMap/index.html": "31b572cfd45ce0537b470286888168016be4465e",
     "https://mskladanowski.github.io/QTHMap/main-QGSMALTS.js": "11c1dbff7e6b95cb2fe4aae2a2249885b32afc68",
     "https://mskladanowski.github.io/QTHMap/manifest.webmanifest": "d9bf8fd463576fc1372b6c3dcddca7ab0f13080e",
     "https://mskladanowski.github.io/QTHMap/media/layers-2x-TBM42ERR.png": "152a162333e46d24f9d89f566312fc0c64011dee",
     "https://mskladanowski.github.io/QTHMap/media/layers-55W3Q4RM.png": "c9e7528e491a39232ba24a2706c6c739d6fb0f06",
     "https://mskladanowski.github.io/QTHMap/media/marker-icon-2V3QKKVC.png": "60a90bcbb2b42b7ddb4556db94eb7c1084b0e5da",
-    "https://mskladanowski.github.io/QTHMap/polyfills-LZBJRJJE.js": "fda1c82c5c620f1fa442f687b3df45a037f6fcc9",
+    "https://mskladanowski.github.io/QTHMap/polyfills-2Z7E34QL.js": "71824213cb728754347594b1fff09f1b1b04fd2c",
     "https://mskladanowski.github.io/QTHMap/scripts-CJ7U2I2N.js": "c5f0bae5ab85ec11f1c2003966ccf66946846007",
     "https://mskladanowski.github.io/QTHMap/styles-YCTE6KIV.css": "7c6edd0e4065d052360457d037102898ddabaf8f"
   },
