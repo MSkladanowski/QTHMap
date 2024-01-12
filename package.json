@@ -42,6 +42,7 @@
     "leaflet.markercluster": "^1.5.3",
     "mdb-reader": "^3.0.0",
     "os-browserify": "^0.3.0",
+    "process": "^0.11.10",
     "rxjs": "~7.8.0",
     "stream": "^0.0.2",
     "stream-browserify": "^3.0.0",

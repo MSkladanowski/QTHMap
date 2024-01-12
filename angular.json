@@ -28,7 +28,8 @@
               "@joergdietrich/leaflet.terminator"
             ],
             "polyfills": [
-              "zone.js"
+              "zone.js",
+              "src/process.ts"
             ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
