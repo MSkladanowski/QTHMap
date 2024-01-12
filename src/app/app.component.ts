@@ -129,7 +129,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.arc = L.Polyline.Arc(center1, center2, { color: 'red', vertices: 200 });
       this.arc.addTo(this.map);
       const angle = getAngle(center1.lat, center1.lng, center2.lat, center2.lng);
-      this.selectedPoints[0].box.bindPopup(`Kąt pomiędzy ${this.selectedPoints[0].locator} a ${this.selectedPoints[1].locator} wynosi: ${Math.round(angle).toString()}° odległość ${(this.map?.distance(center1, center2) ?? 1 / 1000).toFixed(2)}`, { closeOnClick: false, autoClose: false }).openPopup();
+      this.selectedPoints[0].box.bindPopup(`Kąt pomiędzy ${this.selectedPoints[0].locator} a ${this.selectedPoints[1].locator} wynosi: ${Math.round(angle).toString()}° 
+      Odległość ${((this.map?.distance(center1, center2) ?? 1) / 1000).toFixed(2)}km`, { closeOnClick: false, autoClose: false }).openPopup();
       this.calculatedAngle.next(Math.round(angle).toString());
       this.map?.fitBounds(this.selectedPoints.map(x => x.box.getBounds()).reduce((acc, val) => acc.extend(val)));
     }
