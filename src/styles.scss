@@ -1,6 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import './../node_modules/leaflet.markercluster/dist/MarkerCluster.css';
+@import './../node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css';
 
 /* You can add global styles to this file, and also import other style files */
 .leaflet-no-background {
@@ -19,4 +21,8 @@ app-root {
 
 .d-block {
     display: block !important;
+}
+
+.leaflet-pane.leaflet-shadow-pane {
+    display: none;
 }

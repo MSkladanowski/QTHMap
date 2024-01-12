@@ -157,7 +157,7 @@ L.Maidenhead = L.LayerGroup.extend({
 			return [minLat, minLng, minLat + (0.25 / 60), minLng + (0.5 / 60)];
 		}
 
-		throw new Error("String passed to maidenhead indexToBBox has invalid length");
+		throw new Error("String passed to maidenhead indexToBBox has invalid length: " + str + " end" + strLen);
 	},
 });
 

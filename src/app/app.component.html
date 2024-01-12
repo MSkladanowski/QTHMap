@@ -9,6 +9,8 @@
     <div class="  absolute bottom-4 left-2 z-[10000] flex flex-col gap-4">
       <button class="btn" onclick="my_modal_5.open? my_modal_5.close():  my_modal_5.show()"><ng-icon
           name="featherSun"></ng-icon></button>
+      <button class="btn" onclick="pointsImport.open? pointsImport.close():  pointsImport.show()"><ng-icon
+          name="featherMapPin"></ng-icon></button>
       <label for="my-drawer" class="btn btn-primary drawer-button"><ng-icon name="featherSearch"></ng-icon></label>
     </div>
 
@@ -41,5 +43,40 @@
     [style.transform]="'translate3d(' + itemSize?.left + 'px,' + itemSize?.top + 'px, 0px )'" resize
     (resizeEnd)="updateSize($event)">
     <img class="h-full" src="https://www.hamqsl.com/solarn0nbh.php">
+  </div>
+</dialog>
+
+<dialog id="pointsImport" class="modal modal-bottom sm:modal-middle z-[10000]">
+  <div class="modal-box">
+    <p class="mb-4">Aktualna liczba wczytanych lokalizatorów: {{getProcesedPointsLength() }}</p>
+    <p class="mb-4">Zaimportuj lokalizatory</p>
+    <input type="file" class="file-input file-input-bordered w-full max-w-xs" (change)="uploadFile($event)" />
+    <p class="mb-4 mt-4">Zmiana wyświetlania:</p>
+    <div class="form-control">
+      <label class="label cursor-pointer">
+        <span class="label-text">Bez markerów</span>
+        <input type="radio" value="Empty" (change)="onDisplayModeChange('Empty')" name="radio-10" class="radio"
+          [checked]="selectedDisplayMode == 'Empty'" />
+      </label>
+    </div>
+    <div class="form-control">
+      <label class="label cursor-pointer">
+        <span class="label-text">HeatMap</span>
+        <input type="radio" value="Heatmap" (change)="onDisplayModeChange('Heatmap')" name="radio-10" class="radio"
+          [checked]="selectedDisplayMode == 'Heatmap'" />
+      </label>
+    </div>
+    <div class="form-control">
+      <label class="label cursor-pointer">
+        <span class="label-text">Markery</span>
+        <input type="radio" value="Marker" (change)="onDisplayModeChange('Marker')" name="radio-10" class="radio"
+          [checked]="selectedDisplayMode == 'Marker'" />
+      </label>
+    </div>
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn">Zamknij</button>
+      </form>
+    </div>
   </div>
 </dialog>

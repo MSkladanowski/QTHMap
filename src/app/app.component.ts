@@ -6,12 +6,16 @@ import { LatLng, LatLngBounds, LayerGroup, LeafletMouseEvent, Map, MapOptions, P
 import 'leaflet-arc'; // import leaflet-arc here
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
-import { featherSave, featherSearch, featherArrowLeftCircle, featherSun } from '@ng-icons/feather-icons';
+import { featherSave, featherSearch, featherArrowLeftCircle, featherSun, featherMapPin } from '@ng-icons/feather-icons';
 import "./L.Maidenhead.js"
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import terminator from '@joergdietrich/leaflet.terminator';
 import { CdkDrag } from '@angular/cdk/drag-drop';
 import { ResizeDirective } from './directive/resize.directive.js';
+import e from 'express';
+import 'leaflet.heat'
+import 'leaflet.markercluster'
+
 
 
 
@@ -29,9 +33,10 @@ type StoredLocalization = {
   imports: [CommonModule, RouterOutlet, LeafletModule, ReactiveFormsModule, NgIconComponent, CdkDrag, ResizeDirective],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
-  viewProviders: [provideIcons({ featherSave, featherSearch, featherArrowLeftCircle, featherSun })]
+  viewProviders: [provideIcons({ featherSave, featherSearch, featherArrowLeftCircle, featherSun, featherMapPin })]
 })
 export class AppComponent implements OnInit, AfterViewInit {
+  [x: string]: any;
   constructor(private cdr: ChangeDetectorRef) { }
   itemSize!: DOMRect;
   updateSize(ev: DOMRect) {
@@ -41,6 +46,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   title = 'QTHMap';
   selectedPoints: StoredLocalization[] = [];
   arc: any;
+  selectedDisplayMode: "Empty" | "Heatmap" | "Marker" = "Empty";
   calculatedAngle: BehaviorSubject<string> = new BehaviorSubject<string>('');
   locForm: FormGroup = new FormGroup({
     sourceLocalization: new FormControl(''),
@@ -123,7 +129,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.arc = L.Polyline.Arc(center1, center2, { color: 'red', vertices: 200 });
       this.arc.addTo(this.map);
       const angle = getAngle(center1.lat, center1.lng, center2.lat, center2.lng);
-      this.selectedPoints[0].box.bindPopup(`Kąt pomiędzy ${this.selectedPoints[0].locator} a ${this.selectedPoints[1].locator} wynosi: ${Math.round(angle).toString()}°`, { closeOnClick: false, autoClose: false }).openPopup();
+      this.selectedPoints[0].box.bindPopup(`Kąt pomiędzy ${this.selectedPoints[0].locator} a ${this.selectedPoints[1].locator} wynosi: ${Math.round(angle).toString()}° odległość ${(this.map?.distance(center1, center2) ?? 1 / 1000).toFixed(2)}`, { closeOnClick: false, autoClose: false }).openPopup();
       this.calculatedAngle.next(Math.round(angle).toString());
       this.map?.fitBounds(this.selectedPoints.map(x => x.box.getBounds()).reduce((acc, val) => acc.extend(val)));
     }
@@ -158,6 +164,64 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     this.layers.push(poly);
     this.storeLocator(locator, poly);
+  }
+  uploadFile(event: Event) {
+    const element = event.currentTarget as HTMLInputElement;
+    let fileList: FileList | null = element.files;
+    if (fileList) {
+      fileList.item(0)?.text().then(x => {
+        let points: any[] = [];
+
+
+        let lines = x.split('\r\n')
+        lines.forEach(line => {
+          let fixedLine = line.trim().replace(/[^A-Za-z0-9]/g, '');
+          if (line && line.trim() && fixedLine.length % 2 == 0) {
+            let res = this.maidenhead.maidehneadIndexToBBox(fixedLine);
+            if (res[0] && res[1]) {
+              let lng = res[0] - ((res[0] - res[2]) / 2);
+              let lat = res[1] - ((res[1] - res[3]) / 2);
+              points.push([lng, lat]);
+            }
+          }
+        });
+        localStorage.setItem('processedPoints', JSON.stringify(points));
+        localStorage.setItem('processedPointsLength', points.length.toString());
+      });
+    }
+  }
+
+  heatMapLayer: any;
+  markersLayer: any;
+  onDisplayModeChange(entry: "Empty" | "Heatmap" | "Marker"): void {
+    this.selectedDisplayMode = entry;
+    if (this.heatMapLayer) {
+      this.map?.removeLayer(this.heatMapLayer);
+    }
+    if (this.markersLayer) {
+      this.map?.removeLayer(this.markersLayer);
+    }
+    if (entry == "Heatmap") {
+      if (!this.heatMapLayer) {
+        let points = JSON.parse(localStorage.getItem('processedPoints') ?? "[]");
+        this.heatMapLayer = L.heatLayer(points, { radius: 50 });
+      }
+      this.map?.addLayer(this.heatMapLayer);
+
+    }
+    if (entry == "Marker") {
+      if (!this.markersLayer) {
+        let points = JSON.parse(localStorage.getItem('processedPoints') ?? "[]");
+        this.markersLayer = L.markerClusterGroup();
+        points.forEach((point: any) => {
+          this.markersLayer.addLayer(L.marker(point));
+        });
+      }
+      this.map?.addLayer(this.markersLayer);
+    }
+  }
+  getProcesedPointsLength(): number {
+    return JSON.parse(localStorage.getItem('processedPointsLength') ?? "0");
   }
 
   saveSourceLocalization() {
