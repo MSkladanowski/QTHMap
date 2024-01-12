@@ -11,15 +11,14 @@ import "./L.Maidenhead.js"
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import terminator from '@joergdietrich/leaflet.terminator';
 import { CdkDrag } from '@angular/cdk/drag-drop';
-import { ResizeDirective } from './directive/resize.directive.js';
 import e from 'express';
 import 'leaflet.heat'
 import 'leaflet.markercluster'
+import MDBReader, { Value } from 'mdb-reader';
 
-
-
-
-
+import { Buffer as BufferPolyfill } from 'buffer'
+declare var Buffer: typeof BufferPolyfill;
+globalThis.Buffer = BufferPolyfill
 
 declare let L: any;
 type StoredLocalization = {
@@ -30,7 +29,7 @@ type StoredLocalization = {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, LeafletModule, ReactiveFormsModule, NgIconComponent, CdkDrag, ResizeDirective],
+  imports: [CommonModule, RouterOutlet, LeafletModule, ReactiveFormsModule, NgIconComponent, CdkDrag],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   viewProviders: [provideIcons({ featherSave, featherSearch, featherArrowLeftCircle, featherSun, featherMapPin })]
@@ -169,26 +168,58 @@ export class AppComponent implements OnInit, AfterViewInit {
   uploadFile(event: Event) {
     const element = event.currentTarget as HTMLInputElement;
     let fileList: FileList | null = element.files;
-    if (fileList) {
-      fileList.item(0)?.text().then(x => {
-        let points: any[] = [];
 
 
-        let lines = x.split('\r\n')
-        lines.forEach(line => {
-          let fixedLine = line.trim().replace(/[^A-Za-z0-9]/g, '');
-          if (line && line.trim() && fixedLine.length % 2 == 0) {
-            let res = this.maidenhead.maidehneadIndexToBBox(fixedLine);
-            if (res[0] && res[1]) {
-              let lng = res[0] - ((res[0] - res[2]) / 2);
-              let lat = res[1] - ((res[1] - res[3]) / 2);
-              points.push([lng, lat]);
-            }
-          }
-        });
-        localStorage.setItem('processedPoints', JSON.stringify(points));
-        localStorage.setItem('processedPointsLength', points.length.toString());
-      });
+    let files = fileList;
+    if (files?.length !== 1) {
+      return;
+    }
+    const file = files[0];
+
+    const reader = new FileReader();
+    reader.onload = (e) => this.handleBuffer(e.target?.result);
+    reader.readAsArrayBuffer(file);
+
+
+    // if (fileList) {
+    //   fileList.item(0)?.text().then(x => {
+
+
+    //     let lines = x.split('\r\n')
+    //     this.processLocators(lines);
+    //   });
+    // }
+  }
+  private processLocators(lines: string[]) {
+    let points: any[] = [];
+
+    lines.forEach(line => {
+      let fixedLine = line.trim().replace(/[^A-Za-z0-9]/g, '');
+      if (line && line.trim() && fixedLine.length % 2 == 0) {
+        let res = this.maidenhead.maidehneadIndexToBBox(fixedLine);
+        if (res[0] && res[1]) {
+          let lng = res[0] - ((res[0] - res[2]) / 2);
+          let lat = res[1] - ((res[1] - res[3]) / 2);
+          points.push([lng, lat]);
+        }
+      }
+    });
+    localStorage.setItem('processedPoints', JSON.stringify(points));
+    localStorage.setItem('processedPointsLength', points.length.toString());
+  }
+
+  handleBuffer(buffer: any) {
+    console.log("buffer", Buffer);
+    const reader = new MDBReader(Buffer.from(buffer) as any);
+
+    for (const tableName of reader.getTableNames()) {
+      console.log(`Table: ${tableName}`);
+      let table = reader.getTable(tableName);
+      let colData = table.getData({ columns: ["COL_GRIDSQUARE"] });
+      let values = colData.map((x: any) => x.COL_GRIDSQUARE as string);
+      console.log(values);
+      this.processLocators(values.filter(x => x != null));
+
     }
   }
 
@@ -212,10 +243,14 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     if (entry == "Marker") {
       if (!this.markersLayer) {
+        var LeafIcon = L.Icon.extend({});
+        var fixedIcon = new LeafIcon({
+          iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png'
+        })
         let points = JSON.parse(localStorage.getItem('processedPoints') ?? "[]");
         this.markersLayer = L.markerClusterGroup();
         points.forEach((point: any) => {
-          this.markersLayer.addLayer(L.marker(point));
+          this.markersLayer.addLayer(L.marker(point, { icon: fixedIcon }));
         });
       }
       this.map?.addLayer(this.markersLayer);

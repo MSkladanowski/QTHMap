@@ -20,6 +20,13 @@
             "outputPath": "dist/qthmap",
             "index": "src/index.html",
             "browser": "src/main.ts",
+            "allowedCommonJsDependencies": [
+              "leaflet",
+              "leaflet-arc",
+              "leaflet.heat",
+              "leaflet.markercluster",
+              "@joergdietrich/leaflet.terminator"
+            ],
             "polyfills": [
               "zone.js"
             ],

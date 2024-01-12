@@ -3,6 +3,7 @@
 @tailwind utilities;
 @import './../node_modules/leaflet.markercluster/dist/MarkerCluster.css';
 @import './../node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css';
+@import './../node_modules/leaflet/dist/leaflet.css';
 
 /* You can add global styles to this file, and also import other style files */
 .leaflet-no-background {
